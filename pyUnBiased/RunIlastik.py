@@ -40,10 +40,10 @@ def run_one_object(all_args2):
 def run_ilastik(project_object, project_pixel, directory):
     """
 
-    :param project_object:
-    :param project_pixel:
-    :param directory:
-    :return:
+    :param project_object: .ilp file for object classification
+    :param project_pixel: .ilp file for pixel classification
+    :param directory: raw files directory
+    :return: 1 if successful
     """
     cpu_count = multiprocessing.cpu_count()
     memory_mb = psutil.virtual_memory()[0] / 1000000
@@ -67,7 +67,8 @@ def run_ilastik(project_object, project_pixel, directory):
     raw_files = natsorted(glob.glob(directory_pixel))
     prob_files = natsorted(glob.glob(os.path.join(directory, '*.h5')))
     print('Found %d raw and %d prob files' % (len(raw_files), len(prob_files)))
-    assert len(raw_files) == len(prob_files)
+    if not len(raw_files) == len(prob_files)
+        raise ValueError('Number of files not the same %d != %d' % (len(raw_files), len(prob_files)))
     all_args = zip(raw_files, prob_files, repeat(project_object, len(raw_files)))
 
     # run pixel
@@ -80,7 +81,9 @@ def run_ilastik(project_object, project_pixel, directory):
     p = Pool(cpu_count)
     object_results = p.map(run_one_object, all_args)
     all_status = sum([x[0] for x in object_results])
-    assert len(raw_files) == all_status
+    if not len(raw_files) == all_status
+        raise ValueError('Some files failed object: %d != %d' % (len(raw_files), all_status))
+    return 1
 
 
 if __name__ == "__main__":
