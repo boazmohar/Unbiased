@@ -1,6 +1,7 @@
 import glob
 import multiprocessing
 import os
+import sys
 import psutil
 import subprocess
 from itertools import repeat
@@ -80,3 +81,11 @@ def run_ilastik(project_object, project_pixel, directory):
     object_results = p.map(run_one_object, all_args)
     all_status = sum([x[0] for x in object_results])
     assert len(raw_files) == all_status
+
+
+if __name__ == "__main__":
+    # Get the arguments list
+    total = len(sys.argv)
+    cmd_args = str(sys.argv)
+    assert total == 3
+    run_ilastik(project_object=cmd_args[0], project_pixel=cmd_args[1], directory=cmd_args[2])
