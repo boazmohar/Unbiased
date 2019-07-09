@@ -1,7 +1,7 @@
+import argparse
 import glob
 import multiprocessing
 import os
-import sys
 import psutil
 import subprocess
 from itertools import repeat
@@ -38,23 +38,17 @@ def run_one_object(all_args):
     return status, command, stdout.decode(), stderr.decode()
 
 
-def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=True, run_object=True):
+def run_ilastik(directory, project_pixel=None, project_object=None):
     """
 
-    :param project_object: .ilp file for object classification
-    :param project_pixel: .ilp file for pixel classification
     :param directory: raw files directory
-    :param run_pixel: if True will run the pixel first
-    :param run_object: if True will run the object classification
+    :param project_pixel: .ilp file for pixel classification
+    :param project_object: .ilp file for object classification
     :return: 1 if successful
     """
     # input checks
-    if run_pixel is False and run_object is False:
-        raise ValueError('Need at least one of run_pixel/run_object to be True')
-    if run_pixel is True and project_pixel is None:
-        raise ValueError('run_pixel is True but project_pixel is None')
-    if run_object is True and project_object is None:
-        raise ValueError('run_object is True but project_object is None')
+    if project_pixel is None and project_object is None:
+        raise ValueError('Need at least one of project_pixel/project_object to be not None')
     directory_tiffs = os.path.join(directory, '*.tiff')
     if len(directory_tiffs) == 0:
         raise ValueError('found 0 *.tiff files in %s' % directory)
@@ -63,7 +57,7 @@ def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=Tr
     cpu_count = multiprocessing.cpu_count()
     memory_mb = psutil.virtual_memory()[0] / 1000000
 
-    if run_pixel:
+    if project_pixel is not None:
         # environment for pixel
         env_pixel = os.environ.copy()
         env_pixel["LAZYFLOW_THREADS"] = '%d' % cpu_count
@@ -76,7 +70,7 @@ def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=Tr
         project_string = '--project=/groups/svoboda/svobodalab/users/moharb/%s' % project_pixel
         os.system('{} {} {} {}'.format(env_string, program_string, project_string, directory_tiffs))
 
-    if run_object:
+    if project_object is not None:
         # environment for object
         env_object = os.environ.copy()
         env_object["LAZYFLOW_THREADS"] = '1'
@@ -105,7 +99,12 @@ def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=Tr
 
 if __name__ == "__main__":
     # Get the arguments list
-    total = len(sys.argv)
-    cmd_args = str(sys.argv)
-    assert total == 3
-    run_ilastik(project_object=cmd_args[0], project_pixel=cmd_args[1], directory=cmd_args[2])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("directory", help="raw data directory")
+    parser.add_argument("-p", "--project_pixel", help=".ilp file for pixel classification")
+    parser.add_argument("-o", "--project_object", help=".ilp file for object classification")
+    args = parser.parse_args()
+    if not (args.project_pixel or args.project_object):
+        parser.error('No action requested, add -project_pixel or -project_object')
+    run_ilastik(directory=args.directory, project_pixel=args.project_pixel,
+                project_object=args.project_object)
