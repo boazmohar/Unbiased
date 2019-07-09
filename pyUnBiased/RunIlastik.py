@@ -4,8 +4,38 @@ import os
 import sys
 import psutil
 import subprocess
+from itertools import repeat
 from multiprocessing import Pool
 from natsort import natsorted
+
+
+def run_one_object(all_args):
+    """
+
+    :param all_args: tuple [0]: raw data, [1]: segmentation, [2] project name, [3] env_object
+    :return: status, command, stdout.decode(), stderr.decode()
+    """
+    raw_data = all_args[0]
+    segmentation_image = all_args[1]
+    project_object = all_args[2]
+    env_object = all_args[3]
+    command = ['/groups/svoboda/home/moharb/ilastik-1.3.2post1-Linux/run_ilastik.sh',
+               '--headless',
+               '--project=/groups/svoboda/svobodalab/users/moharb/%s' % project_object,
+               '--readonly=1',
+               '--raw_data=%s' % raw_data,
+               '--prediction_maps=%s/exported_data' % segmentation_image,
+               '--export_source=object predictions',
+               '--output_format=tif']
+
+    result = subprocess.Popen(command,
+                              env=env_object,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+
+    stdout, stderr = result.communicate()
+    status = 'Completed Batch Processing' in stdout.decode()
+    return status, command, stdout.decode(), stderr.decode()
 
 
 def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=True, run_object=True):
@@ -60,34 +90,10 @@ def run_ilastik(directory, project_object=None, project_pixel=None, run_pixel=Tr
         print('Found %d raw and %d prob files' % (len(raw_files), len(prob_files)))
         if not len(raw_files) == len(prob_files):
             raise ValueError('Number of files not the same %d != %d' % (len(raw_files), len(prob_files)))
-        all_input_args = zip(raw_files, prob_files)
+        all_input_args = zip(raw_files, prob_files, repeat(project_object, len(raw_files)),
+                             repeat(env_object, len(raw_files)))
 
         # run object
-        def run_one_object(all_args):
-            """
-
-            :param all_args: tuple [0]: raw data, [1]: segmentation, [2] project name, [3] env_object
-            :return: status, command, stdout.decode(), stderr.decode()
-            """
-            raw_data = all_args[0]
-            segmentation_image = all_args[1]
-            command = ['/groups/svoboda/home/moharb/ilastik-1.3.2post1-Linux/run_ilastik.sh',
-                       '--headless',
-                       '--project=/groups/svoboda/svobodalab/users/moharb/%s' % project_object,
-                       '--readonly=1',
-                       '--raw_data=%s' % raw_data,
-                       '--prediction_maps=%s/exported_data' % segmentation_image,
-                       '--export_source=object predictions',
-                       '--output_format=tif']
-
-            result = subprocess.Popen(command,
-                                      env=env_object,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE)
-
-            stdout, stderr = result.communicate()
-            status = 'Completed Batch Processing' in stdout.decode()
-            return status, command, stdout.decode(), stderr.decode()
 
         p = Pool(cpu_count)
         object_results = p.map(run_one_object, all_input_args)
