@@ -3,6 +3,8 @@
     <words>
       <w>ilastik</w>
       <w>lazyflow</w>
+      <w>parallelization</w>
+      <w>parfor</w>
     </words>
   </dictionary>
 </component>
