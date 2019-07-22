@@ -105,7 +105,7 @@ def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None)
 
     if matlab:
         os.chdir(directory)
-        os.system("/usr/local/matlab-2018b/bin/matlab -r 'try GetMasks_par_files_v3({});" 
+        os.system("matlab -r 'try GetMasks_par_files_v3({});" 
                   " catch; end; quit'".format(cpu_count))
         print('~~~~~~~~Done with matlab~~~~~~~~~~~~~~')
     return 1
