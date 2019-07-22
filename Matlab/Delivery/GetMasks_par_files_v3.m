@@ -9,6 +9,9 @@ function GetMasks_par_files_v3(cores, ch_names)
 % Object: 1-cell, 2-dendrtie, 3-saturated cell, 4 small cell, 
 % 5-small not cell, 6-artifact, 7- not sure, 8- big not cell,
 % 9- saturated not cell
+if ischar(cores)
+    cores = round(str2double(cores));
+end
 if nargin < 2
     ch_names= {'FITC','Texas','Cy5'};
 end
@@ -34,7 +37,6 @@ SE          = strel('square',25);
 SE2          = strel('square',3);
 pp = ParforProgress; 
 parfor i =1:numFiles
-    cd(current_dir)
     % read prob image
     filename    = probFiles{i};
     fprintf('Loading i: %d, file: %s\n',i, filename);
@@ -58,14 +60,13 @@ parfor i =1:numFiles
     bw_not_d    = ~imdilate(bw_not, SE2); % avoid border pixels by dilating
     Pixels(i)   = sqrt(sum(px(3, :, :) < 0.2, 'all'));
     % get raw data crop to match RGB version
-    cd('raw');
     all_channels = zeros(sz(1), sz(2), n_ch, 'uint16');
     for ch = 1: length(ch_names)
         ch_name = ch_names{ch};
-        curernt_ch = imread([baseName ch_name '.tiff']);
+        curernt_ch = imread([current_dir filesep 'raw' filesep ...
+            baseName ch_name '.tiff']);
         all_channels(:, :, ch) = curernt_ch(1:sz(1), 1:sz(2));
     end
-    cd(current_dir);
     % get labels
     label1              = bwlabel(bw_1); % cell
     label2              = bwlabel(bw_2); % saturated
