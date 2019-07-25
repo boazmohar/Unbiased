@@ -93,7 +93,6 @@ def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None)
         all_input_args = zip(raw_files, prob_files, repeat(project_object, len(raw_files)),
                              repeat(env_object, len(raw_files)))
 
-
         # run object
 
         p = Pool(cpu_count)
@@ -105,7 +104,7 @@ def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None)
 
     if matlab:
         os.chdir(directory)
-        os.system("matlab -r 'try GetMasks_par_files_v3({});" 
+        os.system("matlab -r 'try GetMasks_par_files_v3({});"
                   " catch; end; quit'".format(cpu_count))
         print('~~~~~~~~Done with matlab~~~~~~~~~~~~~~')
     return 1
