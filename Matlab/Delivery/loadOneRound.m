@@ -53,6 +53,7 @@ for i = 1:length(All_anms)
     current.Ch_Names    = data.Ch_Names;
     current             = add_marker(current);
     current.filenames   = filenames;
+    current.Image_Size  = data.Image_Size(files2, :);
     current.x           = cell2mat(data.x(files2));
     current.y           = cell2mat(data.y(files2));
     current.z           = cell2mat(data.z(files2));

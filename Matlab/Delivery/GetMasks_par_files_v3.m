@@ -9,6 +9,7 @@ function GetMasks_par_files_v3(cores, ch_names)
 % Object: 1-cell, 2-dendrtie, 3-saturated cell, 4 small cell, 
 % 5-small not cell, 6-artifact, 7- not sure, 8- big not cell,
 % 9- saturated not cell
+disp('New2!!!');
 if ischar(cores)
     cores = round(str2double(cores));
 end
@@ -34,14 +35,22 @@ Background  = cell(numFiles, n_ch);
 Cell_Type   = cell(numFiles,1);
 Pixels      = zeros(numFiles,1);
 SE          = strel('square',25);
-SE2          = strel('square',3);
+SE2         = strel('square',3);
+all_sz      = zeros(numFiles,2);
 pp = ParforProgress; 
 parfor i =1:numFiles
     % read prob image
     filename    = probFiles{i};
-    fprintf('Loading i: %d, file: %s\n',i, filename);
-    prob        = imread(filename);
+    try
+        fprintf('Loading i: %d, file: %s\n',i, filename);
+        prob        = imread(filename);
+    catch
+        pause(0.1);
+        fprintf('Loading i2: %d, file: %s\n',i, filename);
+        prob        = imread(filename);
+    end
     sz          = size(prob);
+    all_sz(i, :)= sz;
     bw_1        = prob == 1; % cell
     bw_2        = prob == 3; % saturated cell
     bw_3        = prob == 4; % small cell
@@ -141,6 +150,7 @@ data.BG         = Background;
 data.Cell_Type  = Cell_Type;
 data.Pixels     = Pixels;
 data.Ch_Names   = ch_names;
+data.Image_Size = all_sz;
 name            = ['MaskData_v3_' datestr(now, 'yyyy-mm-dd_HH-MM-SS')];
 % sace and cleanup
 save(name, 'data')

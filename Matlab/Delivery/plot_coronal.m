@@ -1,9 +1,11 @@
 %% plot coronal
 function f = plot_coronal(data)
 zs = unique(data.z);
-f = figure('color', 'black', 'units','normalized','position',[0, 0, 1, 1]);
+f = figure('color', 'black', 'units','normalized','position',...
+    [0.2, 0.2, .7, .7]);
 f.PaperPositionMode = 'auto';
 s = ceil(sqrt(length(zs)));
+
 axs = matlab.graphics.axis.Axes.empty();
 for i = 1:length(zs)
     z = zs(i);
@@ -11,8 +13,9 @@ for i = 1:length(zs)
     
     axs(i) = subaxis(s,s,i, 'Spacing', 0.03, 'Padding', 0, 'Margin', 0.1,...
         'SpacingVert', 0.03);
+    user = struct('data',data, 'i' ,i );
     scatter(data.y(index), data.x(index), 10, data.fraction_sub(index), ...
-        'filled')
+        'filled', 'userdata', user, 'ButtonDownFcn',@figure_call);
     caxis([0, 1]);
     colormap(jet(128));
     axis off

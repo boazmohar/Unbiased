@@ -8,6 +8,7 @@ files = {files.name};
 %%
 plot_virus(files);
 plot_log_k_lz(files);
+plot_z(files);
 %%
 
 for i = 1:length(files)
@@ -19,7 +20,6 @@ for i = 1:length(files)
     fig2 = plot_virus_pr(data);
     fig3 = plot_k(data);
     fig4 = plot_coronal(data);
-    
     figname =  sprintf('Round%d_ANM%d',data.Round, data.ANM);
     export_fig([figname '_Fraction'], fig1, '-png');
     export_fig([figname '_virus_pr'], fig2, '-png');
