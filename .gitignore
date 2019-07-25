@@ -43,3 +43,5 @@ pip-delete-this-directory.txt
 
 
 \.DS_Store
+
+*.asv
