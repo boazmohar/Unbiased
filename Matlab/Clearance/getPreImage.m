@@ -1,10 +1,11 @@
-function preImage = getPreImage(path, imageSize, preName)
+function [preImage, preTime] = getPreImage(path, imageSize, preName)
 if nargin < 3
     preName = 'Pre_';
 end
 preString = ['*' preName '*.tif'];
 cd(path);
 pre = dir(preString);
+preTime = datetime(pre(1).date);
 pre = {pre.name};
 numberPre = length(pre);
 preImages = zeros(numberPre, imageSize(1), imageSize(2));
