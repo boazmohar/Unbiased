@@ -1,6 +1,8 @@
 function data = add_marker(data)
 
 switch data.Round
+    case 0
+        data.marker = 'h';
     case 2
         data.marker = 'v';
     case 3
@@ -42,6 +44,9 @@ switch data.invivo_dye
     case 585
         data.dye_name = 'JF585';
         data.color='y';
+    case 0
+        data.dye_name = 'Blank';
+        data.color='k';
         
 end
 % if data.v
@@ -56,6 +61,11 @@ switch data.virus_name
             data.exvivo_index = 3;
             
         end
+        
+    case 'None'
+        data.virus_index = 1;
+        data.invivo_index = 3;
+        data.exvivo_index = 2;
     otherwise
         error('Wrong virus name')
 end

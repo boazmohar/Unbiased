@@ -11,6 +11,7 @@ Calibration(609) = 2.0;
 Calibration(541) = 2.0;
 Calibration(533) = 2.0;
 Calibration(559) = 2.0;
+Calibration(0)   = 2.0;
 Blank = containers.Map('KeyType','uint32', 'ValueType', 'double');
 Blank(669) = 207.8;
 Blank(585) = 155.0;
@@ -21,6 +22,7 @@ Blank(609) = 150.0;
 Blank(541) = 150.0;
 Blank(533) = 150.0;
 Blank(559) = 150.0;
+Blank(0)   = 150.0;
 %% load data
 cd(basePath)
 cd(sprintf('Round%d', All_anms(1).Round))
