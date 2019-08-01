@@ -38,10 +38,11 @@ def run_one_object(all_args):
     return status, command, stdout.decode(), stderr.decode()
 
 
-def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None):
+def run_ilastik(directory, cores=None, project_pixel=None, project_object=None, matlab=None):
     """
 
     :param directory: raw files directory
+    :param cores: number of cores to enforce if None will call
     :param project_pixel: .ilp file for pixel classification
     :param project_object: .ilp file for object classification
     :param matlab: flag for matlab mask extraction parallelization: 'files' or 'labels'
@@ -56,14 +57,16 @@ def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None)
     if len(directory_tiffs) == 0:
         raise ValueError('found 0 *.tiff files in %s' % directory)
     # get system information
-    cpu_count = multiprocessing.cpu_count()
+    if cores is None:
+        cpu_count = multiprocessing.cpu_count()
+    else:
+        cpu_count = cores
     memory_mb = psutil.virtual_memory()[0] / 1000000
-
     if project_pixel is not None:
         # environment for pixel
         env_pixel = os.environ.copy()
         env_pixel["LAZYFLOW_THREADS"] = '%d' % cpu_count
-        mem_pixel = int(memory_mb * 0.8)
+        mem_pixel = int(memory_mb)
         env_pixel["LAZYFLOW_TOTAL_RAM_MB"] = '%d' % mem_pixel
         print('Pixel env: giving %d cpu_count, giving %dMB memory' % (cpu_count, mem_pixel))
         directory_tiffs = os.path.join(directory, '*.tiff')
@@ -104,8 +107,7 @@ def run_ilastik(directory, project_pixel=None, project_object=None, matlab=None)
 
     if matlab:
         os.chdir(directory)
-        os.system("matlab -r 'try GetMasks_par_files_v3({});"
-                  " catch; end; quit'".format(cpu_count))
+        os.system('matlab -nosplash -r "GetMasks_par_files_v3({})"'.format(cpu_count))
         print('~~~~~~~~Done with matlab~~~~~~~~~~~~~~')
     return 1
 
@@ -114,6 +116,7 @@ if __name__ == "__main__":
     # Get the arguments list
     parser = argparse.ArgumentParser()
     parser.add_argument("directory", help="raw data directory")
+    parser.add_argument("-n", "--cores", help="max cores")
     parser.add_argument("-p", "--project_pixel", help=".ilp file for pixel classification")
     parser.add_argument("-o", "--project_object", help=".ilp file for object classification")
     parser.add_argument("-m", "--matlab", help="flag for matlab empty=don't run")
@@ -121,4 +124,4 @@ if __name__ == "__main__":
     if not (args.project_pixel or args.project_object or args.matlab):
         parser.error('No action requested, add project_pixel, project_object or matlab')
     run_ilastik(directory=args.directory, project_pixel=args.project_pixel,
-                project_object=args.project_object, matlab=args.matlab)
+                project_object=args.project_object, matlab=args.matlab, cores=int(args.cores))
