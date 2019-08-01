@@ -1,4 +1,5 @@
 function figure_call(A, B)
+disp('WORKING');
 path        = pwd();
 offset      = 150;
 data        = A.UserData.data;
@@ -12,7 +13,8 @@ imageSize   = data.Image_Size(image_i, :);
 x           = x+imageSize(1)/2;
 y           = y+imageSize(2)/2;
 baseName    = data.filenames{image_i};
-f = figure('units','normalized', 'position', [1.2, 0, 0.8, 0.8]);
+f = figure('units','normalized', 'position', [0.1, 0, 0.8, 0.8], ...
+    'Name',baseName);
 chs = length(data.Ch_Names);
 % all_axs(1:2*chs) = axes(f);
 all_axs(1:chs) = axes(f);
