@@ -1,7 +1,7 @@
 %% clear all
 clear; close all;
 unbiased_dm11 = 'V:\users\moharb\Unbiased';
-unbiased_dropbox = 'F:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis';
+unbiased_dropbox = 'E:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis';
 cd(unbiased_dm11)
 %%
 folders = dir('Round*');
@@ -9,8 +9,9 @@ folders = {folders.name};
 for i = 1:length(folders)
     cd(unbiased_dm11);
     folder = folders{i};
-    round = folder(end);
-    
+    expression = '\d+$';
+    matchStr = regexp(folder,expression,'match');
+    round = matchStr{1};
     switch round
         case '0'
             anm1 = struct('ANM',35,'invivo_dye',0,'exvivo_dye',0,...
@@ -99,6 +100,26 @@ for i = 1:length(folders)
                 'cond','single-20-20', 'Round',8, 'Folder', folder,  ...
                 'virus_name', 'GFP', 'z_spaceing', 400);
             All_anms = [anm1, anm2, anm3, anm4, anm5];
+        case '11'
+            
+            anm1 = struct('ANM',64,'invivo_dye',669,'exvivo_dye',585,...
+                'cond','double-fast','Round',11, 'Folder', folder,  ...
+                'virus_name', 'GFP', 'z_spaceing', 400);
+            anm2 = struct('ANM',65,'invivo_dye',669,'exvivo_dye',552,...
+                'cond','single-20-20',  'Round',11, 'Folder', folder,  ...
+                'virus_name', 'GFP', 'z_spaceing', 400);
+            anm3 = struct('ANM',66,'invivo_dye',646,'exvivo_dye',552,...
+                'cond','single-20-20', 'Round',11, 'Folder', folder,  ...
+                'virus_name', 'GFP', 'z_spaceing', 400);
+            anm4 = struct('ANM',67,'invivo_dye',552,'exvivo_dye',669,...
+                'cond','double-fast', 'Round',11, 'Folder', folder,  ...
+                'virus_name', 'GFP', 'z_spaceing', 400);
+            anm5 = struct('ANM',68,'invivo_dye',570,'exvivo_dye',669,...
+                'cond','single-20-20', 'Round',11, 'Folder', folder,  ...
+                'virus_name', 'GFP', 'z_spaceing', 400);
+            All_anms = [anm1, anm2, anm3, anm4, anm5];
+%             All_anms = [anm2, anm3, anm5];
+            
         otherwise
             continue
     end

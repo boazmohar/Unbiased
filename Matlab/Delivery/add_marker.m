@@ -15,6 +15,8 @@ switch data.Round
         data.marker = '^';
     case 8
         data.marker = 'p';
+    case 11
+        data.marker = '>';
 end
 switch data.invivo_dye
     case 669
@@ -40,6 +42,12 @@ switch data.invivo_dye
         data.color='b';
     case 533
         data.dye_name = 'JF533';
+        data.color='b';
+    case 646
+        data.dye_name = 'JF646Bio';
+        data.color='b';
+    case 570
+        data.dye_name = 'JF570';
         data.color='b';
     case 585
         data.dye_name = 'JF585';
@@ -73,7 +81,7 @@ fprintf('Virus: %s-->%d:%s, invivo: %d-->%d:%s, exvivo: %d-->%d:%s\n',  ...
     data.virus_name, data.virus_index, data.Ch_Names{data.virus_index}, ...
     data.invivo_dye, data.invivo_index,data.Ch_Names{data.invivo_index}, ...
     data.exvivo_dye, data.exvivo_index, data.Ch_Names{data.exvivo_index});
-if strcmpi(data.cond, 'double')  | strfind(data.cond, ',')
+if strfind(data.cond, 'double')  | strfind(data.cond, ',')
     data.double = 1;
 else
     data.double = 0;

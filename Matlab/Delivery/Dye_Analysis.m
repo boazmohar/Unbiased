@@ -1,4 +1,4 @@
-cd('F:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis')
+cd('E:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis')
 close all; clear;
 %% list all animals
 files = dir('Round*.mat');
@@ -9,9 +9,11 @@ files = {files.name};
 plot_virus(files);
 plot_log_k_lz(files);
 plot_z(files);
+plot_wavelength(files);
+plot_GFP_Invivo(files);
 %%
 
-for i = 1:length(files)
+for i = 2:6%length(files)
    
     file = files{i};
     data = load(file, 'current');
