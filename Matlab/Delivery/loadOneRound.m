@@ -1,28 +1,7 @@
 function loadOneRound(All_anms, basePath, savePath)
 
 %% Calibration
-Calibration = containers.Map('KeyType','uint32', 'ValueType', 'double');
-Calibration(669) = 1.855;
-Calibration(585) = 2.099;
-Calibration(552) = 2.369;
-Calibration(612) = 2.0;
-Calibration(608) = 2.0;
-Calibration(609) = 2.0;
-Calibration(541) = 2.0;
-Calibration(533) = 2.0;
-Calibration(559) = 2.0;
-Calibration(0)   = 2.0;
-Blank = containers.Map('KeyType','uint32', 'ValueType', 'double');
-Blank(669) = 207.8;
-Blank(585) = 155.0;
-Blank(552) = 152.0;
-Blank(612) = 150.0;
-Blank(608) = 150.0;
-Blank(609) = 150.0;
-Blank(541) = 150.0;
-Blank(533) = 150.0;
-Blank(559) = 150.0;
-Blank(0)   = 150.0;
+
 %% load data
 cd(basePath)
 cd(sprintf('Round%d', All_anms(1).Round))
@@ -72,7 +51,11 @@ for i = 1:length(All_anms)
     current.virus_bg  = bg(:, current.virus_index);
     current.invivo_bg = bg(:, current.invivo_index);
     current.exvivo_bg = bg(:, current.exvivo_index);
-       
+    if isfield(current, 'configuration')
+        [Calibration, Blank] = getCalibration(current.configuration);
+    else
+        [Calibration, Blank] = getCalibration();
+    end
     current.blank_invivo = Blank(current.invivo_dye);
     current.blank_exvivo = Blank(current.exvivo_dye);
     current.slope_invivo = Calibration(current.invivo_dye);
