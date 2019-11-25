@@ -1,4 +1,4 @@
-function fig = plot_z(files)
+function plot_z(files)
 fig = figure(15);
 fig.Position = [2500   440   970   480];
 clf;
@@ -6,11 +6,6 @@ for i = 2:length(files)
     file = files{i};
     data = load(file, 'current');
     data = data.current;
-    if data.double
-        edge = 'k';
-    else
-        edge = 'none';
-    end
     zs = sort(unique(data.z));
     values = zeros(length(zs), 1);
     errors = zeros(length(zs), 1);
@@ -23,9 +18,8 @@ for i = 2:length(files)
         if errors(k) > 0.5
             values(k) = nan;
         end
-%         errors(k) = nanstd(current);
     end
-    errorbar(zs.*data.z_spaceing, values, errors, ['-' data.marker], 'color',data.color , 'DisplayName',  ...
+    errorbar(zs.*data.z_spaceing, values, errors, 'color',data.color , 'DisplayName',  ...
         sprintf('%d:R%d,ANM%d,%s,%s', i, data.Round, data.ANM, ...
         data.dye_name, data.cond), 'linewidth',0.5)
     hold on;
@@ -47,11 +41,6 @@ for i = 2:length(files)
     file = files{i};
     data = load(file, 'current');
     data = data.current;
-    if data.double
-        edge = 'k';
-    else
-        edge = 'none';
-    end
     zs = sort(unique(data.z));
     if length(zs) < 10
         continue
@@ -76,15 +65,15 @@ for i = 2:length(files)
     x = zs.*data.z_spaceing;
     x_all = [x_all; x];
     y_all = [y_all; values_norm];
-    errorbar(x, values_norm, errors_norm, ...
-        ['-' data.marker], 'color',data.color , 'DisplayName',  ...
+    errorbar(x, values_norm, errors_norm, 'color',data.color , 'DisplayName',  ...
         sprintf('%d:R%d,ANM%d,%s,%s', i, data.Round, data.ANM, ...
         data.dye_name, data.cond), 'linewidth',0.5)
     hold on;
     text(zs(end)*data.z_spaceing+150,values_norm(end), sprintf('%d', i))
 end
-plot([0, 14000], [1 1], 'k', 'linewidth', 1.5,'HandleVisibility','off');
-plot([900, 2500], [1.3 1.3], 'k', 'linewidth', 2,'HandleVisibility','off');
+plot([900, 2500], [1.3 1.3], 'c', 'linewidth', 10,'DisplayName',...
+    'Normalization region');
+
 n_bins = 20;
 [Y, E] = discretize(x_all,n_bins);
 centers = (E(1:end-1) + E(2:end))/2;
@@ -97,6 +86,9 @@ for i = 1:n_bins
 end
 errorbar(centers, mean_values, mean_SE, 'color','k', 'linewidth',3, ...
     'DisplayName', 'Mean \pm SE');
+
+plot([0, 14000], [1 1], '--', 'color',[0.5, 0.5, 0.5], ...
+    'linewidth', 2,'DisplayName','Y=1');
 legend('Location','bestoutside');
 xlabel('AP axis position(\mum)');
 ylabel('Normalized Median(\pmSE) fraction in vivo ');

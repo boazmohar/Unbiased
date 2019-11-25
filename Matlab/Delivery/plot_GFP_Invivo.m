@@ -1,4 +1,4 @@
-function [fig1, fig2] = plot_GFP_Invivo(files)
+function plot_GFP_Invivo(files)
 close all
 for i = 1:length(files)
     file = files{i};
