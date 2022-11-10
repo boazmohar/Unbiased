@@ -15,6 +15,9 @@ log_k_lz = log(k_lz);
 f1 = figure(14);
 f1.Position = [560   530   970   480];
 clf;
+data_all_klz = [];
+data_all_dye = {};
+data_all_frac = [];
 for i = 1:length(files)
     file = files{i};
     data = load(file, 'current');
@@ -35,7 +38,9 @@ for i = 1:length(files)
         sprintf('%d:R%d,ANM%d,%s,%s', i, data.Round, data.ANM, ...
         data.dye_name, data.cond), 'MarkerEdgeColor', edge, 'linewidth',2)
     hold on;
-    
+    data_all_klz(i) = log_k_lz(index);
+    data_all_dye(i) ={data.dye_name};
+    data_all_frac(i) = nanmean(data.fraction_sub);
     text(log_k_lz(index)+0.2, nanmean(data.fraction_sub), sprintf('%d', i))
     
    
@@ -54,3 +59,6 @@ text(log_k_lz+dx, nm+dy, names);
 xlabel('Log k_{L-Z}');
 ylabel('\lambda max');
 saveas(f2, 'log_k_lz_vs_l_max.png')
+tbl = table(data_all_dye', data_all_klz', data_all_frac');
+tbl.Properties.VariableNames = {'Dye','Log Klz','Fraction invivo'};
+writetable(tbl, 'KLZ.csv')

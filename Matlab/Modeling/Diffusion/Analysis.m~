@@ -1,0 +1,9 @@
+rates = linspace(1.1, 99, 15);
+widths = [];
+for i = 1:length(rates)
+    widths(i) = Diffusion_1D_BM_fun(rates(i), 0, 0);
+end
+figure()
+plot(rates, widths, '-*')
+xlabel('Injecation rate (AU/dt)');
+ylabel('Saturation width (dx)');

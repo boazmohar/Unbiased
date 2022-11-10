@@ -15,6 +15,8 @@ switch data.Round
         data.marker = '^';
     case 8
         data.marker = 'p';
+    case 10
+        data.marker = '<';
     case 11
         data.marker = '>';
 end
@@ -52,6 +54,9 @@ switch data.invivo_dye
     case 585
         data.dye_name = 'JF585';
         data.color='y';
+    case 525
+        data.dye_name = 'JF525';
+        data.color='g';
     case 0
         data.dye_name = 'Blank';
         data.color='k';
@@ -69,7 +74,16 @@ switch data.virus_name
             data.exvivo_index = 3;
             
         end
-        
+    case 'mRuby'
+        data.virus_index = 2;
+        if data.invivo_dye > 600
+            data.invivo_index = 3;
+            data.exvivo_index = 1;
+        else
+            data.invivo_index = 1;
+            data.exvivo_index = 3;
+            
+        end
     case 'None'
         data.virus_index = 1;
         data.invivo_index = 3;

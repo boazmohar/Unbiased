@@ -1,7 +1,7 @@
 clear;
 close all;
 clc;
-cd('F:\Dropbox (HHMI)\Projects\Unbised\Clearance');
+cd('E:\Dropbox (HHMI)\Projects\Unbised\Clearance');
 %%
 files = dir('Clearance*.mat');
 mat_files = sort_nat({files.name});
@@ -37,9 +37,9 @@ for i = 1:n_files
     [fit_res, gof, x, opts] = fitDouble(t(data.offset:end), ...
         median_middle, sprintf('%d:Dye:%s', i, data.dye));
     if i == 1
-        export_fig('All_fits', gcf, '-pdf');
+        export_fig('All_fits_liver', gcf, '-pdf');
     else
-        export_fig('All_fits', gcf, '-pdf', '-append');
+        export_fig('All_fits_liver', gcf, '-pdf', '-append');
     end
     close;
     switch data.dye
@@ -59,6 +59,9 @@ for i = 1:n_files
     if i > 5
         a.LineWidth=2;
     end
+    if (isfield(data, 'Liver')) && data.Liver == 1
+        a.LineStyle=':';
+    end
     hold on;
     ci = confint(fit_res);
     x_t = table(i,string(data.dye),fit_res.a, fit_res.b, fit_res.c, fit_res.d, ...
@@ -69,7 +72,7 @@ end
 
 T.Properties.VariableNames = {'i' 'dye' 'a' 'b' 'c' 'd' 'e' 'ci_low', ...
     'ci_high', 'fit'};
-f = figure(12);
+f = figure(12); 
 
 xlim([0 1400])
 f.Position = [700   204   897   643];
@@ -80,10 +83,10 @@ hLegend = findobj(gcf, 'Type', 'Legend');
 hLegend.Box = 'off';
 hLegend.Position = [0.5806    0.5049    0.2798    0.3904];
 set(gca, 'xScale','linear');
-print('Population','-r300','-dpng')
+print('Population_wLiver','-r300','-dpng')
 xlim([0 100])
 print('PopulationZoomIn','-r300','-dpng')
 set(gca, 'xScale','log');
 xlim([0 1400])
 hLegend.Position = [0.1469    0.2467    0.2798    0.3904];
-print('Population_log','-r300','-dpng')
+print('Population_wLiver_log','-r300','-dpng')

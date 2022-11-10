@@ -3,7 +3,7 @@ function  plot_virus(files)
 %   Detailed explanation goes here
 %%
 f1 = figure(12);
-f1.Position = [560   430   970   480];
+% f1.Position = [560   430   970   480];
 clf;
 for i = 1:length(files)
     file = files{i};
@@ -13,6 +13,9 @@ for i = 1:length(files)
         edge = 'k';
     else
         edge = 'none';
+    end
+    if ~isfield(data, 'Pixels_mm')
+        continue
     end
     x = nansum(data.virus_sub)./ nansum(data.Pixels_mm);
     y = nanmean(data.fraction_sub);
@@ -32,16 +35,22 @@ saveas(f1, 'Sumvirus_vs_fraction.png')
 set(gca, 'XScale', 'log')
 saveas(f1, 'Sumvirus_vs_fraction_log.png')
 f2 = figure(13);
-f2.Position = [560 20 970 480];
+% f2.Position = [560 20 970 480];
 clf;
 for i = 1:length(files)
     file = files{i};
     data = load(file, 'current');
     data = data.current;
+    if ~isfield(data,'Pixels_mm')
+        continue
+    end
     if data.double
         edge = 'k';
     else
         edge = 'none';
+    end
+    if ~isfield(data, 'Pixels_mm')
+        continue
     end
     x = length(data.virus_sub)./ (nansum(data.Pixels_mm));
     y = nanmean(data.fraction_sub);

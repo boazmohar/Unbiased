@@ -1,5 +1,8 @@
 function [data_a, data_b, data_c, data_d, data_e] = FitPixelDouble(imageSize, ...
-    groupNumber, registered, x, BW, fit_res)
+    groupNumber, registered, x, BW, fit_res, offset)
+if nargin < 7
+    offset = 1;
+end
 newSize = [imageSize(1)/2, imageSize(2)/2];
 data_ds = zeros(newSize(1), newSize(2), groupNumber-1);
 for i = 1:groupNumber-1
@@ -25,7 +28,7 @@ size_i = newSize(1);
 size_j = newSize(2);
 parfor i = 1:size_i
     for j = 1:size_j
-        current = squeeze(data_ds(i, j, :));
+        current = squeeze(data_ds(i, j, offset-1:end));
         if sum(current) < 10 || sum(isnan(current))
             continue
         end

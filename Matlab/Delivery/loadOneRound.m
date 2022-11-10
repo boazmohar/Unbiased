@@ -19,10 +19,19 @@ for i = 1:length(All_anms)
     current             = All_anms(i);
     Anm                 = sprintf('ANM%d', current.ANM);
     current.MaskData    = mask_date;
+    
+    current.Ch_Names    = data.Ch_Names;
+    current             = add_marker(current);
     fprintf('R:%d,ANM:%d @ %s,%s\n', current.Round, current.ANM, ...
         pwd(), mask);
     cd(round_dir);
-    objProb             = dir('*Object*.tif');
+    if strcmpi(current.virus_name, 'mRuby')
+        cd('RFP')
+        objProb             = dir('*Object*.tif');
+        cd('..')
+    else
+        objProb             = dir('*Object*.tif');
+    end
     probFiles           = sort_nat({objProb.name});
     files2              = contains(probFiles, Anm);
     files3              = probFiles(files2);
@@ -31,8 +40,6 @@ for i = 1:length(All_anms)
         k               = strfind(files3{f},'_');
         filenames(f)    = {files3{f}(1:k(end))};
     end
-    current.Ch_Names    = data.Ch_Names;
-    current             = add_marker(current);
     current.filenames   = filenames;
     current.Image_Size  = data.Image_Size(files2, :);
     current.x           = cell2mat(data.x(files2));
@@ -41,7 +48,7 @@ for i = 1:length(All_anms)
     current.z           = current.z - min(current.z);
     current.CellType    = cell2mat(data.Cell_Type(files2));
     current.Pixels      = data.Pixels(files2);
-    current.Pixels_mm   = current.Pixels * 5.6778 / 1000000;
+%     current.Pixels_mm   = current.Pixels * 5.6778 / 1000000;
  
     values = cell2mat(data.Values(files2, 1));
     bg = cell2mat(data.BG(files2, 1));

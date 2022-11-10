@@ -9,8 +9,8 @@ files = {files.name};
 plot_virus(files);
 plot_log_k_lz(files);
 plot_z(files);
-plot_wavelength(files);
 plot_GFP_Invivo(files);
+plot_wavelength(files);
 %%
 
 for i = 2:6%length(files)

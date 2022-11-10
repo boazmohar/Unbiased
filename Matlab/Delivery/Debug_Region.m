@@ -1,11 +1,11 @@
 %% select slide to look at
-Round   = 8;
-ANM     = 31;
-slide   = 3;
-region  = '006';
+Round   = 11;
+ANM     = 67;
+slide   = 6;
+region  = '001';
 % baseDir = '/Volumes/svobodalab/users/moharb/Unbiased/';
-baseDir = 'V:\users\moharb\Unbiased\';
-red_dye = 585;
+baseDir = 'W:\moharb\Unbiased\';
+red_dye = 552;
 far_red = 669;
 numLabelsToSave = 40;
 configuration = 'old';
@@ -41,8 +41,8 @@ bw_not_d    = ~imdilate(bw_not, SE2);
 %%
 cd('raw');
 GFP_ds      = imread([baseName 'FITC.tiff']);
-JF585_ds    = imread([baseName 'Texas.tiff']);
-JF669_ds    = imread([baseName 'Cy5.tiff']);
+JF585_ds    = imread([baseName 'RFP.tiff']);
+JF669_ds    = imread([baseName 'CY5.tiff']);
 cd(current_dir);
 GFP_ds      = GFP_ds(1:sz(1), 1:sz(2));
 JF585_ds    = JF585_ds(1:sz(1), 1:sz(2));
@@ -56,6 +56,7 @@ numLabels2          = max(label2(:));
 numLabels3          = max(label3(:));
 numLabelsAll        = numLabels1 + numLabels2 + numLabels3;
 numLabelsShow       = round(numLabelsAll/numLabelsToSave)-1;
+numLabelsShow       = 2;
 fprintf('Found %d cells, %d saturated, %d small\n', ...
     numLabels1, numLabels2, numLabels3);
 GFP_current         = zeros(numLabelsAll, 1);
@@ -115,7 +116,7 @@ for l = 1:numLabelsAll
     JF669_s = JF669_m - JF669_b;
     JF585_r = JF585_s / (JF585_s + JF669_s);
     JF669_r = JF669_s / (JF585_s + JF669_s);
-    f=figure('visible','off');
+    f=figure('visible','on');
     clf;
     subplot(2,2,1)
     J = imadjust(GFP_ds2);

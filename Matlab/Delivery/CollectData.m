@@ -1,6 +1,6 @@
 %% clear all
 clear; close all;
-unbiased_dm11 = 'V:\users\moharb\Unbiased';
+unbiased_dm11 = 'W:\moharb\Unbiased';
 unbiased_dropbox = 'E:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis';
 cd(unbiased_dm11)
 %%
@@ -100,6 +100,14 @@ for i = 1:length(folders)
                 'cond','single-20-20', 'Round',8, 'Folder', folder,  ...
                 'virus_name', 'GFP', 'z_spaceing', 400);
             All_anms = [anm1, anm2, anm3, anm4, anm5];
+        case '10'
+            anm1 = struct('ANM',16,'invivo_dye',525,'exvivo_dye',669,...
+                'cond','single-20-20','Round',10, 'Folder', folder,  ...
+                'virus_name', 'mRuby', 'z_spaceing', 400);
+            anm2 = struct('ANM',19,'invivo_dye',525,'exvivo_dye',669,...
+                'cond','double-20-20',  'Round',10, 'Folder', folder,  ...
+                'virus_name', 'mRuby', 'z_spaceing', 400);
+            All_anms = [anm1, anm2];
         case '11'
             
             anm1 = struct('ANM',64,'invivo_dye',669,'exvivo_dye',585,...
