@@ -3,7 +3,7 @@ function tbl = compute_tbl(boot_num)
 if nargin < 1
     boot_num = 300;
 end
-cd('Z:\moharb\MECP2')
+cd('E:\MECP2')
 files = dir('ANM*.mat');
 files = {files.name}';
 %%  intervals of pulse and chanse
@@ -16,7 +16,7 @@ configuration = '880_40x_newLaser';
 [Slope, Blank] = getCalibration(configuration);
 %% get shading correction
 DataCache.VerboseDisable();
-DataCache.SetDir('Z:\moharb\MECP2\');
+DataCache.SetDir('E:\MECP2\');
 read_func = @(file)getShading(file);
 DataCache.AddReader('.ims', read_func);
 %%

@@ -22,6 +22,8 @@ switch lower(LUT)
         outImg(:, :, 3) = 0;
     case 'magenta'
         outImg(:, :, 2) = 0;
+    case 'gray'
+        return;
     otherwise
         error('No LUT found') 
 end

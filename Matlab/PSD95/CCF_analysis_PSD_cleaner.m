@@ -1,6 +1,6 @@
 %% make table (once):
 % List files per animal
-baseDir = 'E:\Dropbox (HHMI)\Projects\Unbised\PSD95_EE';
+baseDir = 'C:\Users\moharb\Dropbox (HHMI)\Projects\Unbised\PSD95_EE';
 files = dir([baseDir, '\*s2.tif']);
 files = {files.name}';
 

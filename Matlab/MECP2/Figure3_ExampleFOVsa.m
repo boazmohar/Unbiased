@@ -11,7 +11,7 @@ Names = {'Iba1','NeuN','SOX10'};
 allImages = {};
 X =2930; Y = 2330; Size = 180;
 FOV = 0; writeFile = 0;
-satRange = [0.03, 99.9];
+satRange = [0.03, 99];
 for i =1:3
     file = files{i};
     if i ~= 2
@@ -120,7 +120,7 @@ fig.Color = 'w';
 clf;
 ha = tight_subplot(1,6, 0.005, 0,0);
 chOrder = [4,5,2,3,1];
-LUTOrder = {'magenta','yellow','red','green','blue'};
+LUTOrder = {'magenta','yellow','red','green','gray'};
 for ii = 1:5
     axes(ha(ii))
     ch = chOrder(ii);
@@ -135,7 +135,7 @@ colormap('viridis')
 % cb.Label.String = '\tau (days)';
 % cb.Label.FontSize = 16;
 outName = sprintf('MeCP2_FOV_%s_3.eps',Names{i}) ;
- export_fig(outName, '-eps');
+%  export_fig(outName, '-eps');
  %%
 f = figure();
 f.Color = 'w';

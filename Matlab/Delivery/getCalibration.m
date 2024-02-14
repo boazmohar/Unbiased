@@ -82,6 +82,12 @@ switch configuration
         Blank(673) = 32.0;
         Blank(552) = 128.0;
         
+    case '20x_SlideScanner_0p5NA'
+        Calibration(673) = 2691.5;
+        Calibration(552) = 1495.4;
+        Blank(673) = 348.0;
+        Blank(552) = 207.0;
+        
     otherwise
         error('not calibrated')
 end

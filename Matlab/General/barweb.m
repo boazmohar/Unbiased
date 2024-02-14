@@ -132,13 +132,17 @@ else
 	end
 	
 	% Plot bars
-	handles.bars = bar(barvalues, width,'edgecolor','k', 'linewidth', 1);
-	hold on
-	if ~isempty(bw_colormap)
+    if ~isempty(bw_colormap)
 		colormap(bw_colormap);
+%         nn = floor(256 ./ numbars);
+        colororder(bw_colormap);
 	else
 		colormap(jet);
+        colororder(jet(numbars));
 	end
+	handles.bars = bar(barvalues, width,'edgecolor','k', 'linewidth', 1);
+	hold on
+	
 	if ~isempty(bw_legend) && ~strcmp(legend_type, 'axis')
 		handles.legend = legend(bw_legend, 'location', 'best', 'fontsize',12);
 		legend boxoff;

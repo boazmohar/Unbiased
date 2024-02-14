@@ -23,8 +23,8 @@ ths=[200, 90,30];
 all_r2 = zeros(n_level, 10);
 all_p = zeros(n_level, 10);
 useCheckpoint=1;
-CCF_tree = getCCF_tree();
- [~, LabelTables] = getLabelTables();
+CCF_tree = getCCF_tree('E:\MECP2\');
+ [~, LabelTables] = getLabelTables('C:\Users\moharb\Dropbox (HHMI)\Projects\Unbised\CCF_tools\VisuAlign\');
  bootNum=1000;
  all_r2_boot =  zeros(n_level, 10, bootNum);
  groupSize_all =zeros(n_level, 1);
@@ -130,7 +130,7 @@ f.Units = 'centimeters';
 f.Position = [10,10,5,5];
 f.Color = 'w';
 
-violinplot(all_r2_bootMean',[], 'ViolinColor',shuffleColor );
+violinplot(all_r2_bootMean',[], 'ViolinColor',shuffleColor , 'ShowData',false, 'ViolinAlpha',1);
 hold on;
 s1 = scatter([1,2,3], mean(all_r2, 2), 'k', 'fill');
 errorbar([1,2,3], mean(all_r2, 2), std(all_r2, [], 2)./sqrt(10), 'ko')
@@ -140,12 +140,12 @@ s2 = scatter(1,1,36, shuffleColor,'fill','visible','off');
 % legend([s1, s2], {'Data','Shuffle'}, 'box','off', 'Position',[0.75,0.7,0.12,0.088]);
 ylim([-0.3, 0.9]);
 yticks([-0.3, 0, 0.3, 0.6, 0.9]);
-yticklabels([])
-xticklabels([])
+% yticklabels([])
+% xticklabels([])
 xlim([0.5, 3.3])
 set(gca,'FontSize',10)
-% xlabel('# Regions Level')
-% for kk = 1:3
-%     text(kk, 0.9, sprintf('n=%d\nRegions',groupSize_all(kk)), 'HorizontalAlignment','center')
-% end
-% export_fig('CCF_Bootstrap.png', '-png', '-r300');
+xlabel('# Regions Level')
+for kk = 1:3
+    text(kk, 0.9, sprintf('n=%d\nRegions',groupSize_all(kk)), 'HorizontalAlignment','center')
+end
+export_fig('CCF_Bootstrap.eps');
