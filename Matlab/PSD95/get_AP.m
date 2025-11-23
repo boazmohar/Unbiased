@@ -1,4 +1,4 @@
-function AP = get_AP(filename, dataLines)
+function AP = get_AP(filename, base_dir)
 %IMPORTFILE Import data from a text file
 %  FEMALE1LIN = IMPORTFILE(FILENAME) reads data from text file FILENAME
 %  for the default selection.  Returns the numeric data.
@@ -21,9 +21,9 @@ f = strsplit(filename, '_');
 filename = [f{1} '_lin.xml'];
 % If dataLines is not specified, define defaults
 if nargin < 2
-    dataLines = [3, Inf];
+    base_dir = '';
 end
-
+dataLines = [3, Inf];
 %% Set up the Import Options and import the data
 opts = delimitedTextImportOptions("NumVariables", 15);
 
@@ -47,7 +47,7 @@ opts = setvaropts(opts, "ampoz", "TrimNonNumeric", true);
 opts = setvaropts(opts, "ampoz", "ThousandsSeparator", ",");
 
 % Import the data
-AP = readtable(filename, opts);
+AP = readtable([base_dir filename], opts);
 
 %% Convert to output type
 AP = table2array(AP);

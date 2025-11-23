@@ -1,7 +1,13 @@
-function lme = tau_values(vals, groups, ANMs, n_vals)
+function lme = tau_values(vals, groups, ANMs, n_vals, group_order)
 %lme = tau_values(vals, groups, ANMs, n_vals)
 %   Detailed explanation goes here
 %% get valid and meadian reduce by n_vals
+if nargin < 4
+    n_vals = 1000;
+end
+if nargin < 5
+    group_order ={'control','EE','random','rule'};
+end
 tic
 vals = cellfun(@(x) x(isfinite(x)), vals, "UniformOutput",false);
 sprintf('median reduce %d', floor(toc))
@@ -23,7 +29,11 @@ sprintf('making table %d', floor(toc))
 tbl = table;
 tbl.tau = double(vertcat(vals2{:}));
 tbl.group = categorical(vertcat(group_vector{:}));
-tbl.group = reordercats(tbl.group, {'control','EE','random','rule'});
+try
+    tbl.group = reordercats(tbl.group, group_order);
+catch
+    disp('Order problem')
+end
 tbl.anm = vertcat(anm_vector{:});
 
 sprintf('fitting table %d', floor(toc))

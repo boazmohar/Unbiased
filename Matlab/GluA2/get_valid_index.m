@@ -1,4 +1,4 @@
-function valid = get_valid_index(tbl,threshold)
+function valid = get_valid_index(tbl,threshold, noise)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 %%
@@ -12,6 +12,9 @@ for i = 1:height(tbl)
 end
 if nargin < 2
     threshold = 20; %px
+end
+if nargin < 2
+    noise = 160; %px
 end
 valid = find(tbl.N > threshold);
 valid = setdiff(valid, ex_index);

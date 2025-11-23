@@ -148,13 +148,16 @@ else
 		legend boxoff;
 	else
 		handles.legend = [];
-	end
-	
+    end
+    refresh;
+	pause(.5);
+    refresh;
 	% Plot erros
 	for i = 1:numbars
-% 		x =get(get(handles.bars(i),'children'), 'xdata');
-% 		x = mean(x([1 3],:));
+		% x =get(get(handles.bars(i),'children'), 'xdata');
+		% x = mean(x([1 3],:));
         x = handles.bars(i).XData + handles.bars(i).XOffset;
+        disp(x)
 		handles.errors(i) = errorbar(x, barvalues(:,i), errors(:,i), 'k', 'linestyle', 'none', 'linewidth', 1, ...
             'DisplayName','');
 		ymax = max([ymax; barvalues(:,i)+errors(:,i)]);

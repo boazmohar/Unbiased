@@ -1,4 +1,4 @@
-function [AP, index] = get_AP2(filename, dataLines)
+function [AP, index] = get_AP2(filename, basedir)
 %IMPORTFILE Import data from a text file
 %  FEMALE1LIN = IMPORTFILE(FILENAME) reads data from text file FILENAME
 %  for the default selection.  Returns the data as a table.
@@ -21,8 +21,9 @@ orig = filename;
 f = strsplit(filename, '_');
 filename = [f{1} '_lin.xml'];
 % If dataLines is not specified, define defaults
+dataLines = [1, Inf];
 if nargin < 2
-    dataLines = [1, Inf];
+    basedir = '';
 end
 
 %% Set up the Import Options and import the data
@@ -48,7 +49,7 @@ opts = setvaropts(opts, "AP", "TrimNonNumeric", true);
 opts = setvaropts(opts, "AP", "ThousandsSeparator", ",");
 
 % Import the data
-tbl = readtable(filename, opts);
+tbl = readtable([basedir filename], opts);
 
 valid = ~isnan( tbl.AP);
 keys = tbl.Name(valid);

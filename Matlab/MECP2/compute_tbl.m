@@ -1,9 +1,12 @@
 %%  mat files
-function tbl = compute_tbl(boot_num)
+function tbl = compute_tbl(boot_num, dir_MECP2)
 if nargin < 1
     boot_num = 300;
 end
-cd('E:\MECP2')
+if nargin < 2
+    dir_MECP2 = 'E:\Unbiased\MECP2';
+end
+cd(dir_MECP2)
 files = dir('ANM*.mat');
 files = {files.name}';
 %%  intervals of pulse and chanse
@@ -16,7 +19,7 @@ configuration = '880_40x_newLaser';
 [Slope, Blank] = getCalibration(configuration);
 %% get shading correction
 DataCache.VerboseDisable();
-DataCache.SetDir('E:\MECP2\');
+DataCache.SetDir(dir_MECP2);
 read_func = @(file)getShading(file);
 DataCache.AddReader('.ims', read_func);
 %%

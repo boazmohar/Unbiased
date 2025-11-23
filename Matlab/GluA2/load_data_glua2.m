@@ -1,6 +1,7 @@
 function tbl_all = load_data_glua2(varargin)
-%% tbl_all = load_data_glua2(varargin) outpath = 'D:\', rounds = 'all',
-%negative = true, append_CA1 = True
+%% tbl_all = load_data_glua2(varargin) 
+% outpath = 'D:\', rounds = 'all', negative = true, append_CA1 = True
+%
 % 
 if nargin < 1
     out_path = 'D:\';

@@ -544,3 +544,67 @@ bar_px = bar_size / px_size;
 plot([20,20+bar_px], [400, 400],'k')
 text(20+bar_px./2, 450,'100 \mum',HorizontalAlignment='center', Color='k')
 export_fig('Example_F_EE2.eps')
+%% round 10 DOI
+name = 'GluA2_Round10\Slide 11 from cassette 1_Region 001.png';
+temp = load('E:\Unbiased\GluA2\Calibration_0day_GluA2');
+new_calib = temp.calibration;
+pulse_name = [name(1:end-4) '_CY5.tiff'];
+chase_name = [name(1:end-4) '_CY3.tiff'];
+rawPulse = imread(pulse_name);
+rawChase = imread(chase_name);
+ c = double(rawChase);
+ p = double(rawPulse) * new_calib.slope_ratio - new_calib.offset;
+s = p+c;
+mask = s < 0.05;
+f = p./s;
+t = abs(3./log(1./f));
+t = imgaussfilt(t,2);
+t(mask) = nan;
+t = medfilt2(t,[3,3]);
+%
+figure(5);
+clf;
+hold on
+set(gcf,'Color','w')
+imshow(t', [5,14] )
+colorbar()
+colormap(viridis)
+set(gca,'YDir','normal')
+hold on
+px_size = 0.34 ;
+bar_size = 100;
+bar_px = bar_size / px_size;
+plot([20,20+bar_px], [400, 400],'k')
+text(20+bar_px./2, 450,'100 \mum',HorizontalAlignment='center', Color='k')
+%% control to compare
+name = 'GluA2_Round2\Slide 5 of 1-Region 001.png';
+temp = load('E:\Unbiased\GluA2\Calibration_0day_GluA2');
+new_calib = temp.calibration;
+pulse_name = [name(1:end-4) '_CY5.tiff'];
+chase_name = [name(1:end-4) '_CY3.tiff'];
+rawPulse = imread(pulse_name);
+rawChase = imread(chase_name);
+ c = double(rawChase);
+ p = double(rawPulse) * new_calib.slope_ratio - new_calib.offset;
+s = p+c;
+mask = s < 0.05;
+f = p./s;
+t = abs(3./log(1./f));
+t = imgaussfilt(t,2);
+t(mask) = nan;
+t = medfilt2(t,[3,3]);
+%
+figure(6);
+clf;
+hold on
+set(gcf,'Color','w')
+imshow(t', [5,14] )
+colorbar()
+colormap(viridis)
+set(gca,'YDir','normal')
+hold on
+px_size = 0.34 ;
+bar_size = 100;
+bar_px = bar_size / px_size;
+plot([20,20+bar_px], [400, 400],'k')
+text(20+bar_px./2, 450,'100 \mum',HorizontalAlignment='center', Color='k')

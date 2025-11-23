@@ -1,6 +1,7 @@
 function tbl = get_round_data_GluA2(baseDir,outputDir,round, varargin)
 %%get_round_data_GluA2(baseDir,outputDir,round, varargin):
 % varargin: AP_range=0:50:550, Age_num=4,px_threshold=20, use_pool=true
+% applyCalib = 0 no, 1 = old, 2 = new for getting the right calibration
 %   AP and age num for discretization, px_threshold for exluding small
 %   regions. use_pool for using parfor, set false to debug.
 p = inputParser;
@@ -8,12 +9,14 @@ addParameter(p, 'AP_range', 0:50:550, @ismatrix);
 addParameter(p, 'px_threshold', 20, @isscalar);
 addParameter(p, 'tree_location', 'y:\', @isstring);
 addParameter(p, 'use_pool', true);
-
+addParameter(p, 'applyCalib', 1);
 parse(p, varargin{:});
 AP_range = p.Results.AP_range;
 px_threshold = p.Results.px_threshold;
 tree_location = p.Results.tree_location;
 use_pool = p.Results.use_pool;
+applyCalib = p.Results.applyCalib;
+
 oldFolder = cd(baseDir);
 files = dir([baseDir, '*.png']);
 files = {files.name}';
@@ -23,12 +26,13 @@ files = files(1:2:end);
 nl = contains(files,'_nl');
 assert(sum(nl) == 0)
 if use_pool
-    Tables = cellfunp(@get_table_glua2, files, 'UniformOutput', false, 'Round',round);
+    Tables = cellfunp(@get_table_glua2, files, 'UniformOutput', false, ...
+        'Round',round, 'applyCalib',applyCalib);
 else
     Tables = {};
     for i = 1:numel(files)
         disp(i)
-        Tables{i} = get_table_glua2(files{i}, round);
+        Tables{i} = get_table_glua2(files{i}, round, [], applyCalib);
     end
 end
 tbl = vertcat(Tables{:});

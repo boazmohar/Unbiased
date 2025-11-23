@@ -74,6 +74,50 @@ xtickangle(45)
 % ylim([8,16])
 % yticks([8,10,12,14, 16])
 export_fig('CellTypeMECP2.eps', '-eps');
+%%
+% Assuming decayNeuN, decaySOX10, and decayIba1 are vectors
+decay = [decayNeuN  decaySOX10  decayIba1]; % Combine all data into one matrix
+group = [repmat("NeuN", length(decayNeuN), 1);
+         repmat("SOX10", length(decaySOX10), 1);
+         repmat("Iba1", length(decayIba1), 1)]; % Create group labels
+
+% Plot box plot
+f=figure(1);
+clf
+f.Color='w';
+boxplot(decay./24, group);
+ylim([0,12]);
+xlabel('Cell type marker');
+ylabel('MeCP2 lifetime (τ; d)');
+box off
+
+saveas(f, 'CellTypeMECP2_boxplot.pdf');
+
+%%
+% Assuming decayNeuN, decaySOX10, decayIba1 are available
+decay = [decayNeuN./24; decaySOX10./24; decayIba1./24]; % Combine data
+group = [repmat("NeuN", length(decayNeuN), 1);
+         repmat("SOX10", length(decaySOX10), 1);
+         repmat("Iba1", length(decayIba1), 1)]; % Create group labels
+
+% Plot the box plot with whiskers for 5-95%
+figure;
+h = boxplot(decay', group, 'Whisker', 0.95);
+title('Box Plot with Median, IQR, and 5-95% CI');
+xlabel('Cell Types');
+ylabel('Decay Values');
+
+% Extract whisker values
+stats = boxplotStats(decay', group, 0.95);
+
+% Create descriptive text
+fprintf(['Lifetimes were similar for all cell types, as confidence intervals ' ...
+    'overlapped between all cell types (median and [5th-95th percentiles] of:\n' ...
+    'Iba1: %.1f [%.1f-%.1f], NeuN: %.1f [%.1f-%.1f], SOX10: %.1f [%.1f-%.1f] days of MeCP2 lifetime).\n'], ...
+    stats.NeuN.median, stats.NeuN.lowerWhisker, stats.NeuN.upperWhisker, ...
+    stats.SOX10.median, stats.SOX10.lowerWhisker, stats.SOX10.upperWhisker, ...
+    stats.Iba1.median, stats.Iba1.lowerWhisker, stats.Iba1.upperWhisker);
+
 %% sum
 tbl.sum = cellfun(@(x) sum(x, 2), tbl.rawData, 'UniformOutput',false);
 tbl.sum_mean = cellfun(@mean, tbl.sum);

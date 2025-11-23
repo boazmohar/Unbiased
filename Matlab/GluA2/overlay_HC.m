@@ -41,12 +41,18 @@ end
 %% label HC per round and save
 imageLabeler
 %% for each round
-[Calibration, Blank] = getCalibration('20x_SlideScanner_0p5NA');
+new_calib_flag = true;
+if new_calib_flag
+    temp = load('E:\Unbiased\GluA2\Calibration_0day_GluA2');
+    new_calib = temp.calibration;
+else
+    [Calibration, Blank] = getCalibration('20x_SlideScanner_0p5NA');
+end
 CCF_names = {'Field CA1, oriens', 'Field CA1, pyramidal', ...
     'Field CA1, radiatum', 'Field CA1, slm'};
 CCF_ids = [382001, 382002, 382003, 382004];
 t = 128;
-for i = 1:1
+for i = 1:6
     %% load jt
     switch i
         case 1
@@ -155,8 +161,13 @@ for i = 1:1
             current_r = current(contains(current.Hemi, "right"),:);
             current2 = repmat(current_r, 4, 1);
             for k = 1:numObj
-                p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
-                c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                if new_calib_flag
+                    c = double(chase(k).PixelValues);
+                    p = double(pulse(k).PixelValues) * new_calib.slope_ratio - new_calib.offset;
+                else
+                    p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
+                    c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                end
                 s = p+c;
                 current2.P_Mean(k) = median(p, 'omitnan');
                 current2.P_STD(k) = std(p, 'omitnan');
@@ -188,8 +199,13 @@ for i = 1:1
             current_l = current(contains(current.Hemi, "left"),:);
             current2 = repmat(current_l, 4, 1);
             for k = 1:numObj
-                p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
-                c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                 if new_calib_flag
+                    c = double(chase(k).PixelValues);
+                    p = double(pulse(k).PixelValues) * new_calib.slope_ratio - new_calib.offset;
+                else
+                    p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
+                    c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                end
                 s = p+c;
                 current2.P_Mean(k) = median(p, 'omitnan');
                 current2.P_STD(k) = std(p, 'omitnan');
@@ -216,8 +232,13 @@ for i = 1:1
             assert(numObj == 4);
             current2 = repmat(current, 4, 1);
             for k = 1:numObj
-                p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
-                c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                if new_calib_flag
+                    c = double(chase(k).PixelValues);
+                    p = double(pulse(k).PixelValues) * new_calib.slope_ratio - new_calib.offset;
+                else
+                    p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
+                    c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+                end
                 s = p+c;
                 current2.P_Mean(k) = median(p, 'omitnan');
                 current2.P_STD(k) = std(p, 'omitnan');

@@ -1,15 +1,18 @@
-function tbl = get_table_glua2(name, round, LabelTables)
+function tbl = get_table_glua2(name, round, LabelTables, applyCalib)
 if nargin < 2
     round = 1;
 end
-% parse animal ID, Sex, EE
-[ANM, sex, group, age, line] = parse_name_glua2(name, round); 
+% parse animal ID, Sex, group and pulus chase interval
+[ANM, sex, group, age, line, p_c_interval] = parse_name_glua2(name, round); 
 % find AP location
 [AP, index] =  get_AP_glua2(name, ANM);
 % load allen png
-if nargin < 3
-    atlas_dir = 'Y:\AlignToAllen\VisuAlign-v0_8\ABA_Mouse_CCFv3_2017_25um.cutlas\';
+if nargin < 3 || isempty(LabelTables)
+    atlas_dir = 'D:\VisuAlign-v0_8\ABA_Mouse_CCFv3_2017_25um.cutlas\';
     [~, LabelTables] = getLabelTables(atlas_dir);
+end
+if nargin < 4
+    applyCalib = 1;
 end
 png_name = [name(1:end-4) '_nl.png'];
 if ~isfile(png_name)
@@ -46,14 +49,18 @@ rawChase = single(rawChase).* bin_mask2;
 rawChase(rawChase==0) = nan;
 %% add hemishperes
 label_size = size(mask);
-gt_hemi = load('hemi.mat');
-gt_hemi = gt_hemi.gTruth;
-gt_index = find(contains(gt_hemi.DataSource.Source,name), 1);
-if ~isempty(gt_hemi.LabelData{gt_index,1}{1})
-    tbl = do_hemi_glua2(gt_hemi, gt_index, label_size, png, LabelTables, rawPulse, rawChase,...
-        ANM, sex, group, age, line, AP, index, name, round);
+if isfile('hemi.mat')
+    gt_hemi = load('hemi.mat');
+    gt_hemi = gt_hemi.gTruth;
+    gt_index = find(contains(gt_hemi.DataSource.Source,name), 1);
+    if ~isempty(gt_hemi.LabelData{gt_index,1}{1})
+        tbl = do_hemi_glua2(gt_hemi, gt_index, label_size, png, LabelTables, rawPulse, rawChase,...
+            ANM, sex, group, age, line, AP, index, name, round, applyCalib, p_c_interval);
+    else
+        tbl = do_both_glua2(png, LabelTables, rawPulse, rawChase,...
+            ANM, sex, group, age, line, AP, index, name, round, applyCalib, p_c_interval);
+    end
 else
     tbl = do_both_glua2(png, LabelTables, rawPulse, rawChase,...
-        ANM, sex, group, age, line, AP, index, name, round);
-end
+            ANM, sex, group, age, line, AP, index, name, round, applyCalib, p_c_interval);
 end

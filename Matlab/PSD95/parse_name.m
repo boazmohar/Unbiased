@@ -16,5 +16,7 @@ function [name, sex, EE] = parse_name(name, round)
         else
             EE = true;
         end
+        case 3
+            EE = true;
     end
 end

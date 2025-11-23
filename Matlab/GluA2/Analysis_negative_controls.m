@@ -11,7 +11,7 @@ handles = barweb([stats.mean_P_Mean  stats.mean_C_Mean], ...
     "Region intensity", 'Group','Dye concentration',[],[],{'Pulse','Chase'});
 legend('off')
 legend({'Pulse','Chase'}, 'Box','off')
-yticks(0:0.1:0.41)
+% yticks(0:0.1:0.41)
 handles.ax.TickLength = [0.01, 0.01];
 export_fig('negative_control.eps')
 %%

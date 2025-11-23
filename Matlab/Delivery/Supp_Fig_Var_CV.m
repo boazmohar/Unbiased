@@ -1,4 +1,5 @@
-cd('E:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis')
+% cd('E:\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis')
+cd('C:\Users\moharb\Dropbox (HHMI)\Projects\Unbised\Dye_delivery\NewAnalysis')
 close all; clear;
 %% list all animals
 files = dir('Round*.mat');
@@ -16,17 +17,20 @@ fig.Units = 'Centimeters';
 fig.Position = [5, 5, 12, 8];
 fig.Color = 'white';
 clf;
+N_s = cell(1,length(files)-1);
 for i = 2:length(files)
     data = all_data{i};
     zs = sort(unique(data.z));
     values = zeros(length(zs), 1);
     errors = zeros(length(zs), 1);
     CVs =  zeros(length(zs), 1);
+    N = zeros(length(zs), 1);
     for k = 1:length(zs)
         z = zs(k);
         current = data.fraction_sub(data.z == z);
         values(k) = nanmedian(current);
         std_ = nanstd(current);
+        N(k) = length(current);
         errors(k) = std_ ./ sqrt(length(current));
         CVs(k) = std_ / nanmean(current);
         if errors(k) > 0.5
@@ -44,6 +48,7 @@ for i = 2:length(files)
     errorbar(zs.*data.z_spaceing/1000, values, errors, 'color',color , 'DisplayName',  ...
         sprintf('R%d-ANM%d:%s', data.Round, data.ANM, ...
         data.dye_name), 'linewidth',0.5)
+    N_s{i-1} = N;
     hold on;
 end
 % legend('Location','bestoutside');
@@ -53,7 +58,7 @@ ylim([0 1]);
 xlim([0 14]);
 box off;
 
-export_fig 'figure_Var_A.eps' -depsc
+% export_fig 'figure_Var_A.eps' -depsc
 %%
 fig = figure(16);
 fig.Units = 'Centimeters';
@@ -127,7 +132,7 @@ ylabel('Norm. Median(\pmSE) fraction in vivo ');
 ylim([0.4 1.6]);
 xlim([-0.1, 14]);
 box off;
-export_fig 'figure_Var_B.eps' -depsc
+% export_fig 'figure_Var_B.eps' -depsc
 %%
 fig = figure(16);
 fig.Units = 'Centimeters';
@@ -205,4 +210,4 @@ ylabel('CV fraction in vivo ');
 % ylim([0.4 1.6]);
 xlim([-0.1, 14]);
 box off;
-export_fig 'figure_Var_C2.eps' -depsc
+% export_fig 'figure_Var_C2.eps' -depsc

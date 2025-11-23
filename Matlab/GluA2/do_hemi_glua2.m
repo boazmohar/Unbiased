@@ -1,5 +1,6 @@
 function tbl = do_hemi_glua2(gt_hemi, gt_index, label_size, png, LabelTables, ...
-    rawPulse, rawChase, ANM, sex, group, age, line, AP, index, name, round)
+    rawPulse, rawChase, ANM, sex, group, age, line, AP, index, name, round, applyCalib, ...
+    p_c_interval)
 right_poly = gt_hemi.LabelData{gt_index,1}{1};
 if iscell(right_poly)
     right_poly = cell2mat(right_poly);
@@ -34,10 +35,28 @@ r_hemi =  ic2_s2 .* imresize(right_mask,S2(1:2), 'nearest');
 pulse = regionprops( r_hemi, rawPulse, {'PixelValues', 'Centroid'}); 
 chase = regionprops( r_hemi, rawChase, {'PixelValues'});
 numObj = numel(pulse);
-[Calibration, Blank] = getCalibration('20x_SlideScanner_0p5NA');
+disp(applyCalib);
+switch applyCalib
+    case 1
+        % old calib - protein based
+        [Calibration, Blank] = getCalibration('20x_SlideScanner_0p5NA');
+    case 2
+        % new calib - imaging zero day animals
+        temp = load('E:\Unbiased\GluA2\Calibration_0day_GluA2');
+        new_calib = temp.calibration;
+end
 for k = 1:numObj
-    p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
-    c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+    switch applyCalib
+        case 0 % no calib (used for 0 day animals
+            p = double(pulse(k).PixelValues);
+            c = double(chase(k).PixelValues);
+        case 1
+            p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
+            c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+        case 2
+            c = double(chase(k).PixelValues);
+            p = double(pulse(k).PixelValues) * new_calib.slope_ratio - new_calib.offset;
+    end
     s = p+c;
     pulse(k).P_Mean = median(p, 'omitnan');
     pulse(k).P_STD = std(p, 'omitnan');
@@ -54,10 +73,10 @@ for k = 1:numObj
     pulse(k).AP = AP;    
     pulse(k).Slice = index;
     pulse(k).File = name;
-    pulse(k).tau = abs(3./log(1./pulse(k).fraction));
+    pulse(k).tau = abs(p_c_interval./log(1./pulse(k).fraction));
     f = pulse(k).PixelValues ./ (pulse(k).PixelValues + chase(k).PixelValues);
     f = f(isfinite(f));
-    pulse(k).tau_values = abs(3./log(1./f));
+    pulse(k).tau_values = abs(p_c_interval./log(1./f));
     pulse(k).fp = f;
     pulse(k).Age = age;
     pulse(k).Line = line;
@@ -82,8 +101,17 @@ pulse = regionprops( l_hemi, rawPulse, {'PixelValues', 'Centroid'});
 chase = regionprops( l_hemi, rawChase, {'PixelValues'});
 numObj = numel(pulse);
 for k = 1:numObj
-    p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
-    c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+   switch applyCalib
+        case 0 % no calib (used for 0 day animals
+            p = double(pulse(k).PixelValues);
+            c = double(chase(k).PixelValues);
+        case 1
+            p = (double(pulse(k).PixelValues) - Blank(673)) ./ Calibration(673);
+            c = (double(chase(k).PixelValues) -  Blank(552)) ./  Calibration(552);
+        case 2
+            c = double(chase(k).PixelValues);
+            p = double(pulse(k).PixelValues) * new_calib.slope_ratio - new_calib.offset;
+    end
     s = p+c;
     pulse(k).P_Mean = median(p, 'omitnan');
     pulse(k).P_STD = std(p, 'omitnan');
@@ -100,10 +128,10 @@ for k = 1:numObj
     pulse(k).AP = AP;    
     pulse(k).Slice = index;
     pulse(k).File = name;
-    pulse(k).tau = abs(3./log(1./pulse(k).fraction));
+    pulse(k).tau = abs(p_c_interval./log(1./pulse(k).fraction));
     f = pulse(k).PixelValues ./ (pulse(k).PixelValues + chase(k).PixelValues);
     f = f(isfinite(f));
-    pulse(k).tau_values = abs(3./log(1./f));
+    pulse(k).tau_values = abs(p_c_interval./log(1./f));
     pulse(k).fp = f;
     pulse(k).Age = age;
     pulse(k).Line = line;
