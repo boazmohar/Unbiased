@@ -52,7 +52,11 @@ label_size = size(mask);
 if isfile('hemi.mat')
     gt_hemi = load('hemi.mat');
     gt_hemi = gt_hemi.gTruth;
-    gt_index = find(contains(gt_hemi.DataSource.Source,name), 1);
+    try
+        gt_index = find(contains(gt_hemi.DataSource.Source,name), 1);
+    catch
+        gt_index = find(contains(gt_hemi.DataSource,name), 1);
+    end
     if ~isempty(gt_hemi.LabelData{gt_index,1}{1})
         tbl = do_hemi_glua2(gt_hemi, gt_index, label_size, png, LabelTables, rawPulse, rawChase,...
             ANM, sex, group, age, line, AP, index, name, round, applyCalib, p_c_interval);

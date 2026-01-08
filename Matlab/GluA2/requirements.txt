@@ -5,3 +5,4 @@ Pillow
 scikit-image
 tifffile
 scipy
+matplotlib

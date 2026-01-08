@@ -88,10 +88,10 @@ def _read_image(path: Path) -> np.ndarray:
 
 def _read_tiff(path: Path) -> np.ndarray:
     arr = np.asarray(tiff_imread(path, key=0))
-    # MATLAB imread defaults to the first page; squeeze any extra singleton dims.
+    # MATLAB imread defaults to the first page; if an extra channel/page axis remains, take the first.
     if arr.ndim > 2:
         arr = arr[0]
-    return np.squeeze(arr)
+    return np.asarray(arr)
 
 
 def _resize_nearest(arr: np.ndarray, shape: Sequence[int]) -> np.ndarray:
@@ -204,10 +204,10 @@ def _compute_region_rows(
     bbox: Optional[Tuple[float, float, float, float]],
 ) -> List[Dict[str, object]]:
     rows: List[Dict[str, object]] = []
-    label_img = label_image
-    # Apply hemisphere mask if provided (do not mutate caller's array).
     if hemi_mask is not None:
         label_img = label_image * hemi_mask.astype(label_image.dtype)
+    else:
+        label_img = label_image
 
     labels = np.unique(label_img)
     labels = labels[labels > 0]
@@ -215,7 +215,9 @@ def _compute_region_rows(
 
     for label in labels:
         region_mask = label_image == label
-        if hemi_mask is not None and not np.any(region_mask):
+        if hemi_mask is not None:
+            region_mask = region_mask & hemi_mask
+        if not np.any(region_mask):
             continue
 
         raw_p = raw_pulse[region_mask].astype(float)
@@ -319,7 +321,8 @@ def process_file(
         logger.warning("Missing mask: %s", mask_path)
         return pd.DataFrame()
     mask = _read_tiff(mask_path)
-    bin_mask = (mask > 128).astype(np.uint16)
+    # Match MATLAB thresholding: keep pixels >= 128
+    bin_mask = (mask >= 128).astype(np.uint16)
 
     pulse_path = base_dir / f"{stem}_CY5.tiff"
     chase_path = base_dir / f"{stem}_CY3.tiff"
@@ -332,8 +335,14 @@ def process_file(
     bin_mask2 = _resize_nearest(bin_mask, raw_pulse.shape)
     raw_pulse = np.where(bin_mask2 > 0, raw_pulse, np.nan)
     raw_chase = np.where(bin_mask2 > 0, raw_chase, np.nan)
+    # Match MATLAB: set zeros to NaN after masking so background doesn’t skew medians.
+    raw_pulse[raw_pulse == 0] = np.nan
+    raw_chase[raw_chase == 0] = np.nan
 
     label_image, label_meta = map_png_to_labels(png, label_table)
+    # Align labels to the probability mask (polygon) space first, then to raw image space.
+    if label_image.shape[:2] != mask.shape[:2]:
+        label_image = _resize_nearest(label_image, mask.shape[:2])
     label_image = _resize_nearest(label_image, raw_pulse.shape)
 
     hemi_polygons = {}
@@ -346,8 +355,9 @@ def process_file(
     hemi_info = hemi_polygons.get(file_path.name)
     if hemi_info and hemi_info.get("right") is not None and hemi_info.get("left") is not None:
         label_shape = mask.shape[:2]
-        right_poly = np.column_stack((hemi_info["right"][:, 1], hemi_info["right"][:, 0]))
-        left_poly = np.column_stack((hemi_info["left"][:, 1], hemi_info["left"][:, 0]))
+        # Match MATLAB poly2mask behavior more closely by rounding vertices to pixel centers.
+        right_poly = np.round(np.column_stack((hemi_info["right"][:, 1], hemi_info["right"][:, 0])))
+        left_poly = np.round(np.column_stack((hemi_info["left"][:, 1], hemi_info["left"][:, 0])))
         right_mask = polygon2mask(label_shape, right_poly)
         left_mask = polygon2mask(label_shape, left_poly)
         right_mask = _resize_nearest(right_mask.astype(np.uint8), raw_pulse.shape).astype(bool)

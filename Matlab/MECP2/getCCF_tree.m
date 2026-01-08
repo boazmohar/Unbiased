@@ -2,7 +2,7 @@ function CCF_tree = getCCF_tree(directory)
 % function CCF_tree = getCCF_tree()
 % from https://github.com/cortex-lab/allenCCF
 if nargin < 1
-    directory = 'E:\Unbiased\MECP2\';
+    directory = 'E:\Unbiased\';
 end
 filename = 'structure_tree_safe_2017.csv';
 opts = delimitedTextImportOptions("NumVariables", 21);

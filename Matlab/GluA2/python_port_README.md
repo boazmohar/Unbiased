@@ -8,6 +8,8 @@ Files:
 - `glua2_processing.py`: per-file logic mirroring `get_table_glua2` and hemi/both handling.
 - `glua2_pipeline.py`: round-level CLI that mirrors `get_round_data_GluA2.m` (Parquet writer).
 - `compare_outputs.py`: helper to diff MATLAB vs Python parquet outputs.
+- `convert_hemi_mat.py`: convert `hemi.mat` ground-truth polygons to JSON.
+- `hemi_label_gui.py`: GUI to draw left/right hemi polygons on PNGs and save JSON.
 - `requirements.txt`: Python dependencies.
 
 Usage (example):
@@ -38,3 +40,9 @@ Parity testing:
 1) Run MATLAB pipeline to get `GluA2_round_<n>.parquet`.
 2) Run the Python CLI on the same inputs.
 3) Compare with `python compare_outputs.py --matlab path\to\matlab.parquet --python path\to\python.parquet`.
+
+Hemi polygon helpers:
+1) Convert existing MATLAB labels:
+   `python convert_hemi_mat.py hemi.mat --output-json hemi_polygons.json`
+2) Create new labels via GUI:
+   `python hemi_label_gui.py --image-dir /path/to/pngs --output hemi_polygons.json`

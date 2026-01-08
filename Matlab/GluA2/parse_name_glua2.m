@@ -391,6 +391,40 @@ switch round
                 age = between(DOB, perfusion, 'days');
                 group = 'reversal_control';
         end
+    case 13
+        %% Reversal 4 day pulse chase
+        line = 1;
+        p_c_interval = 4;
+        switch slide
+            case {1,2,3} % ANM576707
+                name = 'BM35';
+                sex = 'female';
+                DOB = datetime(2025,5,23);
+                perfusion = datetime(2025,9,26);
+                age = between(DOB, perfusion, 'days');
+                group = 'reversal';
+            case {5,6,7}
+                name = 'BM36'; % ANM576705
+                sex = 'female';
+                DOB = datetime(2025,5,23);
+                perfusion = datetime(2025,9,26);
+                age = between(DOB, perfusion, 'days');
+                group = 'reversal';
+            case {9,10,11} 
+                name = 'BM37'; % ANM576704
+                sex = 'female';
+                DOB = datetime(2025,5,23);
+                perfusion = datetime(2025,10,13);
+                age = between(DOB, perfusion, 'days');
+                group = 'reversal_control';
+            case {13,14,15} 
+                name = 'BM38'; % ANM576706
+                sex = 'female'; 
+                DOB = datetime(2025,5,23);
+                perfusion = datetime(2025,10,13);
+                age = between(DOB, perfusion, 'days');
+                group = 'reversal';
+        end
 end
 
 

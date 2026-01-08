@@ -7,7 +7,7 @@ function tbl = get_round_data_GluA2(baseDir,outputDir,round, varargin)
 p = inputParser;
 addParameter(p, 'AP_range', 0:50:550, @ismatrix);
 addParameter(p, 'px_threshold', 20, @isscalar);
-addParameter(p, 'tree_location', 'y:\', @isstring);
+addParameter(p, 'tree_location', 'E:\Unbiased\', @isstring);
 addParameter(p, 'use_pool', true);
 addParameter(p, 'applyCalib', 1);
 parse(p, varargin{:});
